@@ -30,6 +30,8 @@ Before running the project, ensure you have the following installed:
 
 ## Installation
 
+TO create an Adlin User you must Provide the Admin Registration Code:NOVA_ADMIN_2025
+
 Follow these steps to set up and run the Zay Shop project locally:
 
 1. **Clone the Repository**
