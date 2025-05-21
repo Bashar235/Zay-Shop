@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ZAY - View Product</title>
+    <style>
+        .product-image-container {
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: .5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1rem auto;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.08);
+        }
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .detail-item {
+            margin-bottom: 0.75rem;
+        }
+        .detail-item strong {
+            color: #5a5c69;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/admin-layout}">
+    <div th:fragment="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Product Details: <span th:text="${product.name}">Product Name</span></h1>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Product Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <h5 class="text-primary mb-3">Product Image</h5>
+                        <div class="product-image-container">
+                            <div th:if="${productImageUrl}">
+                                <img th:src="${productImageUrl}" class="product-image" alt="Product Image"/>
+                            </div>
+                            <div th:unless="${productImageUrl}" class="alert alert-warning m-0 p-2 text-center small" role="alert">
+                                No image
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <h5 class="text-primary mb-3">Details</h5>
+                        <dl class="row">
+                            <dt class="col-sm-3 detail-item">ID:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.id}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Name:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.name}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Category:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${categoryName} ?: 'N/A'"></dd>
+
+                            <dt class="col-sm-3 detail-item">Price:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="'$' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Rating:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.rating}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Review Count:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.reviewCount}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Stock Quantity:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.stockQuantity}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Brand:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.brand}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Description:</dt>
+                            <dd class="col-sm-9 detail-item" th:text="${product.description}"></dd>
+
+                            <dt class="col-sm-3 detail-item">Sizes:</dt>
+                            <dd class="col-sm-9 detail-item">
+                                <span th:if="${!#lists.isEmpty(product.sizes)}" th:each="size, iterStat : ${product.sizes}">
+                                    <span th:text="${size}"></span><span th:if="${!iterStat.last}">, </span>
+                                </span>
+                                <span th:if="${#lists.isEmpty(product.sizes)}">N/A</span>
+                            </dd>
+
+                            <dt class="col-sm-3 detail-item">Colors:</dt>
+                            <dd class="col-sm-9 detail-item">
+                                <span th:if="${!#lists.isEmpty(product.colors)}" th:each="color, iterStat : ${product.colors}">
+                                    <span th:text="${color}"></span><span th:if="${!iterStat.last}">, </span>
+                                </span>
+                                <span th:if="${#lists.isEmpty(product.colors)}">N/A</span>
+                            </dd>
+
+                            <dt class="col-sm-3 detail-item">Specifications:</dt>
+                            <dd class="col-sm-9 detail-item">
+                                <span th:if="${!#lists.isEmpty(product.specifications)}" th:each="spec, iterStat : ${product.specifications}">
+                                    <span th:text="${spec}"></span><span th:if="${!iterStat.last}">, </span>
+                                </span>
+                                <span th:if="${#lists.isEmpty(product.specifications)}">N/A</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <hr/>
+                <div class="text-end">
+                    <a th:href="@{/admin/dashboard}" class="btn btn-primary me-2">Back to Dashboard</a>
+                    <a th:href="@{/admin/products/update/{id}(id=${product.id})}" class="btn btn-warning">Update Product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>NOVA - Analytics Dashboard</title>
+</head>
+<body>
+<div th:replace="~{fragments/admin-layout}">
+  <div th:fragment="content">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <span th:text="${error}"></span>
+    </div>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Analytics Dashboard</h1>
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Product Stock Levels</h6>
+          </div>
+          <div class="card-body">
+            <canvas id="stockChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Order Status Distribution</h6>
+          </div>
+          <div class="card-body">
+            <canvas id="orderStatusChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      document.querySelector('a[href="/admin/analytics"]').parentElement.classList.add('active');
+
+      const csrfHeader = [[${_csrf.headerName}]] || 'X-CSRF-TOKEN';
+      const csrfToken = [[${_csrf.token}]] || '';
+      fetch('/admin/analytics/data', {
+          headers: {
+              [csrfHeader]: csrfToken
+          }
+      })
+      .then(response => {
+          if (!response.ok) {
+              return response.text().then(text => {
+                  throw new Error(`Server error: ${response.status}, Response: ${text.substring(0, 50)}...`);
+              });
+          }
+          return response.json();
+      })
+      .then(data => {
+          new Chart(document.getElementById('stockChart'), {
+              type: 'bar',
+              data: {
+                  labels: data.products.map(p => p.name),
+                  datasets: [{
+                      label: 'Stock Quantity',
+                      data: data.products.map(p => p.stockQuantity),
+                      backgroundColor: '#4e73df',
+                      borderColor: '#4e73df',
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: { color: '#858796' }
+                      },
+                      x: {
+                          ticks: { color: '#858796' }
+                      }
+                  },
+                  plugins: {
+                      legend: { labels: { color: '#858796' } }
+                  }
+              }
+          });
+
+          // Normalize status keys to uppercase
+          const orderStatus = {};
+          Object.keys(data.orderStatus).forEach(key => {
+              orderStatus[key.toUpperCase()] = data.orderStatus[key];
+          });
+
+          new Chart(document.getElementById('orderStatusChart'), {
+              type: 'pie',
+              data: {
+                  labels: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+                  datasets: [{
+                      data: [
+                          orderStatus.PENDING || 0,
+                          orderStatus.CONFIRMED || 0,
+                          orderStatus.SHIPPED || 0,
+                          orderStatus.DELIVERED || 0,
+                          orderStatus.CANCELLED || 0
+                      ],
+                      backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                      borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: { labels: { color: '#858796' } }
+                  }
+              }
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching analytics data:', error);
+          showError('Failed to load analytics data: ' + error.message);
+      });
+  });
+
+  function showError(message) {
+      const modal = document.createElement('div');
+      modal.className = 'modal fade';
+      modal.id = 'errorModal';
+      modal.innerHTML = `
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Error</h5>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">${message}</div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                  </div>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(modal);
+      $('#errorModal').modal('show');
+      $('#errorModal').on('hidden.bs.modal', () => modal.remove());
+  }
+</script>
+</body>
+</html>

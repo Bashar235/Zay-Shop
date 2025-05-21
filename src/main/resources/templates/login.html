@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Zay Shop - Login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content Page -->
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-6 m-auto">
+      <h1 class="h1 text-center">Login</h1>
+      <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+      <div th:if="${param.error}" class="alert alert-danger">
+        Invalid username or password.
+      </div>
+      <div th:if="${param.logout}" class="alert alert-success">
+        You have been logged out.
+      </div>
+      <div th:if="${param.accessDenied}" class="alert alert-warning">
+        Access denied. Please log in with appropriate credentials.
+      </div>
+      <div th:if="${param.cartAccess}" class="alert alert-info">
+        Please log in to access your cart.
+      </div>
+      <form th:action="@{/login}" method="post">
+        <div class="form-group mb-3">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" class="form-control" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control" required />
+        </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-success btn-lg px-3">Login</button>
+        </div>
+      </form>
+      <p class="mt-3 text-center">
+        Don't have an account? <a th:href="@{/user/register}">Register here</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

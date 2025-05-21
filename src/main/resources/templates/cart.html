@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - Zay Shop</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/css/templatemo.css}">
+  <link rel="stylesheet" th:href="@{/css/custom.css}">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light shadow">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand text-success logo h1 align-self-center" href="/">Zay Shop</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main_nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="/cart">Cart</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Cart Section -->
+<section class="bg-light py-5">
+  <div class="container">
+    <h2 class="h2 text-center">Your Cart</h2>
+    <div th:if="${cartItems == null or cartItems.isEmpty()}">
+      <p class="text-center">Your cart is empty.</p>
+    </div>
+    <div th:unless="${cartItems == null or cartItems.isEmpty()}">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cartItems}">
+          <td>
+            <img th:if="${item.imageId != null}" th:src="@{/image/{id}(id=${item.imageId})}" alt="Product Image" width="50" class="img-fluid">
+            <span th:unless="${item.imageId != null}" class="text-muted">No image</span>
+          </td>
+          <td th:text="${item.productName}">Product Name</td>
+          <td th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">0.00</td>
+          <td>
+            <form th:action="@{/cart/update}" method="post">
+              <input type="hidden" name="productId" th:value="${item.productId}">
+              <input type="number" name="quantity" th:value="${item.quantity}" min="1" class="form-control d-inline-block w-auto">
+              <button type="submit" class="btn btn-sm btn-outline-primary mt-1">Update</button>
+            </form>
+          </td>
+          <td th:text="'$' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">0.00</td>
+          <td>
+            <form th:action="@{/cart/remove}" method="post">
+              <input type="hidden" name="productId" th:value="${item.productId}">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="text-end">
+        <h4>Total: <span th:text="'$' + ${#numbers.formatDecimal(cart.totalPrice, 1, 2)}">0.00</span></h4>
+        <a th:href="@{/checkout}" class="btn btn-success">Proceed to Checkout</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <img th:src="@{/image/{id}(id=${logoImage.id})}" alt="Zay Shop" width="50">
+        <p>Zay Shop - Your Online Store</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/templatemo.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+</body>
+</html>

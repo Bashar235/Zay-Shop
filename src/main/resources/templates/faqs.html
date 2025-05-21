@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Zay Shop - FAQs</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Updated: Fixed Thymeleaf syntax -->
+  <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+  <!-- Updated: Fixed static resource paths -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/static/css/templatemo.css}">
+  <link rel="stylesheet" th:href="@{/static/css/custom.css}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content Page -->
+<div class="container-fluid bg-light py-5">
+  <div class="col-md-6 m-auto text-center">
+    <h1 class="h1">Frequently Asked Questions</h1>
+    <p>
+      Got questions? We've got answers. Check out our FAQs below.
+    </p>
+  </div>
+</div>
+
+<!-- FAQs Section -->
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-10 m-auto">
+      <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              What is your return policy?
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              You can return any item within 30 days of purchase, provided it is in its original condition with tags attached. Please contact our support team to initiate a return.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              How long does shipping take?
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Standard shipping typically takes 5-7 business days within the US. International shipping may take 10-15 business days, depending on the destination.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Do you offer international shipping?
+            </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Yes, we ship to most countries worldwide. Shipping costs and delivery times vary based on the destination. Please check our shipping page for more details.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              How can I track my order?
+            </button>
+          </h2>
+          <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website or the carrier's website.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingFive">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+              What payment methods do you accept?
+            </button>
+          </h2>
+          <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              We accept major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay. All transactions are securely processed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<!-- Updated: Fixed script paths -->
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script th:src="@{/static/js/jquery-migrate-1.2.1.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/static/js/templatemo.js}"></script>
+<script th:src="@{/static/js/custom.js}"></script>
+</body>
+</html>

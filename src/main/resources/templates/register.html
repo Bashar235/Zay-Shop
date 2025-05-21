@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Zay - Register</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link rel="apple-touch-icon" th:href="@{/image/${logoImage.id} ?: '/static/img/apple-icon.png'}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/${faviconImage.id} ?: '/static/img/favicon.ico'}">
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/static/css/templatemo.css}">
+  <link rel="stylesheet" th:href="@{/static/css/custom.css}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+  <script src="https://www.google.com/recaptcha/api.js?render=6LcGB0IrAAAAAP2XinUfxMA5slJTv8xAAnVe4opJ"></script>
+</head>
+<body>
+<div th:replace="~{fragments :: topNav}"></div>
+<div th:replace="~{fragments :: header}"></div>
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <h1 class="h2 pb-4">Register</h1>
+        <div id="errorMessage" class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+        <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+        <form th:action="@{/user/register}" th:object="${user}" method="post" id="registerForm" class="needs-validation" novalidate>
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <input type="hidden" name="recaptchaToken" id="recaptchaToken"/>
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}" required minlength="3">
+            <div id="usernameFeedback" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+            <div id="emailFeedback" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}" required minlength="8">
+            <div class="progress mt-2" style="height: 5px;">
+              <div id="passwordStrength" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <div id="passwordFeedback" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            <div id="confirmPasswordFeedback" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" th:field="*{role}">
+              <option value="ROLE_USER">User</option>
+              <option value="ROLE_ADMIN">Admin</option>
+            </select>
+          </div>
+          <div class="mb-3" id="adminCodeGroup" style="display: none;">
+            <label for="adminCode" class="form-label">Admin Registration Code</label>
+            <input type="text" class="form-control" id="adminCode" name="adminCode">
+          </div>
+          <button type="submit" class="btn btn-success">Register</button>
+          <a th:href="@{/login}" class="btn btn-link">Already have an account? Log in</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div th:replace="~{fragments :: footer}"></div>
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/static/js/templatemo.js}"></script>
+<script th:src="@{/static/js/register.js}"></script>
+</body>
+</html>

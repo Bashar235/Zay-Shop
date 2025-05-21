@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Zay Shop - Contact</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <style>
+        .contact-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .contact-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: none;
+            background: white;
+            padding: 2rem; /* Increased padding for a more spacious feel */
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #59ab6e, #3d8b4d);
+            border: none;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1.5rem; /* Slightly larger button padding */
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #3d8b4d, #59ab6e);
+            transform: translateY(-2px);
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+            padding: 0.75rem; /* Increased padding for inputs */
+        }
+        .form-control:focus {
+            border-color: #59ab6e;
+            box-shadow: 0 0 0 0.2rem rgba(89, 171, 110, 0.25);
+        }
+        .contact-info-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: none;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            padding: 1.5rem;
+        }
+        .contact-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        .contact-info-card i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            opacity: 0.7;
+        }
+        .contact-info-card a {
+            color: #d1e8ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-info-card a:hover {
+            color: #ffffff;
+        }
+        .alert-success {
+            border-radius: 8px;
+            background: #c8e6c9;
+            color: #388e3c;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content Page -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="col-md-8 m-auto text-center contact-header">
+            <h1 class="h1">Contact Us</h1>
+            <p>We're here to help! Reach out with any questions or feedback.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Information -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 m-auto">
+                <div class="contact-info-card">
+                    <h5 class="mb-4">Get in Touch</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Consectetur at ligula 10660</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fa fa-phone"></i>
+                            <a href="tel:010-020-0340">010-020-0340</a>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fa fa-envelope"></i>
+                            <a href="mailto:info@company.com">info@company.com</a>
+                        </li>
+                        <li class="d-flex">
+                            <a class="me-3" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i class="fab fa-facebook-f"></i></a>
+                            <a class="me-3" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a class="me-3" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row py-5">
+            <div th:if="${param.success}" class="alert alert-success col-md-9 m-auto">
+                Thank you for your message! We'll get back to you soon.
+            </div>
+            <div class="col-md-9 m-auto">
+                <div class="contact-card">
+                    <div class="card-body">
+                        <h5 class="mb-4">Send Us a Message</h5>
+                        <form th:action="@{/contact}" th:object="${contactSubmission}" method="post" role="form">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <div class="row">
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="inputname">Name</label>
+                                    <input type="text" class="form-control mt-1" id="name" th:field="*{name}" placeholder="Name">
+                                    <div th:errors="*{name}" class="text-danger"></div>
+                                </div>
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="inputemail">Email</label>
+                                    <input type="email" class="form-control mt-1" id="email" th:field="*{email}" placeholder="Email">
+                                    <div th:errors="*{email}" class="text-danger"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputsubject">Subject</label>
+                                <input type="text" class="form-control mt-1" id="subject" th:field="*{subject}" placeholder="Subject">
+                                <div th:errors="*{subject}" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputmessage">Message</label>
+                                <textarea class="form-control mt-1" id="message" th:field="*{message}" placeholder="Message" rows="8"></textarea>
+                                <div th:errors="*{message}" class="text-danger"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-end mt-2">
+                                    <button type="submit" class="btn btn-success btn-lg px-3">Let’s Talk</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

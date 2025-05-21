@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<!-- Top Navigation Fragment -->
+<nav th:fragment="topNav" class="navbar navbar-expand-lg navbar-light shadow">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">ZAY</a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
+            <div class="flex-fill">
+                <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/about}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/shop}">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/contact}">Conteract</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar align-self-center d-flex">
+                <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
+                    <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                    <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" th:text="${cartCount ?: 0}">0</span>
+                </a>
+                <a class="nav-icon position-relative text-decoration-none" th:href="@{/profile}" sec:authorize="isAuthenticated()">
+                    <i class="fa fa-fw fa-user text-dark mr-3"></i>
+                    <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" th:text="${notificationCount ?: 0}">0</span>
+                </a>
+                <a class="nav-icon position-relative text-decoration-none" th:href="@{/login}" sec:authorize="!isAuthenticated()">
+                    <i class="fa fa-fw fa-sign-in-alt text-dark mr-3"></i>
+                    <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">Login</span>
+                </a>
+                <a class="nav-icon position-relative text-decoration-none" th:href="@{/logout}" sec:authorize="isAuthenticated()">
+                    <i class="fa fa-fw fa-sign-out-alt text-dark mr-3"></i>
+                    <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>ZAY - Admin Dashboard</title>
+</head>
+<body>
+<div th:replace="~{fragments/admin-layout}">
+  <div th:fragment="content">
+    <!-- Error Display Section (for CustomErrorController) -->
+    <div th:if="${errorStatus}" class="alert alert-danger" role="alert">
+      <h4 th:text="${'Error ' + errorStatus}"></h4>
+      <p th:text="${errorMessage}"></p>
+    </div>
+
+    <!-- Success/Error Messages (for add/update/delete actions) -->
+    <div th:if="${success}" class="alert alert-success" role="alert">
+      <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <span th:text="${error}"></span>
+    </div>
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Product Management Dashboard</h1>
+    </div>
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Products</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="productTable" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+              <td th:text="${product.id}"></td>
+              <td th:text="${product.name}"></td>
+              <td th:text="${product.categoryName}"></td>
+              <td th:text="${product.price}"></td>
+              <td th:text="${product.stockQuantity}"></td>
+              <td>
+                <a th:href="@{/admin/products/view/{id}(id=${product.id})}" class="btn btn-info btn-icon-split btn-sm">
+                  <span class="icon text-white-50">
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                  <span class="text">View</span>
+                </a>
+                <a th:href="@{/admin/products/update/{id}(id=${product.id})}" class="btn btn-warning btn-icon-split btn-sm">
+                  <span class="icon text-white-50">
+                    <i class="fas fa-edit"></i>
+                  </span>
+                  <span class="text">Update</span>
+                </a>
+                <button th:if="${product.id != null}" th:attr="data-product-id=${product.id}" class="btn btn-danger btn-icon-split btn-sm delete-product">
+                  <span class="icon text-white-50">
+                    <i class="fas fa-trash"></i>
+                  </span>
+                  <span class="text">Delete</span>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

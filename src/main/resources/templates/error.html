@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ZAY - Error</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="h1 text-center mb-4 text-danger">Oops! Something Went Wrong</h1>
+            <div class="alert alert-danger text-center">
+                <p th:text="${error != null} ? ${error} : 'An unexpected error occurred.'"></p>
+                <p th:if="${status != null}"><strong>Status:</strong> <span th:text="${status}"></span></p>
+                <p th:if="${message != null}"><strong>Message:</strong> <span th:text="${message}"></span></p>
+            </div>
+            <div class="text-center mt-4">
+                <button onclick="history.back()" class="btn btn-primary mx-2">Back</button>
+                <a th:href="@{/login}" class="btn btn-secondary mx-2">Login</a>
+                <a href="mailto:support@zayshop.com" class="btn btn-outline-secondary mx-2">Contact Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

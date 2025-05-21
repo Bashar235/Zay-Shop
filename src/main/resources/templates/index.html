@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>ZAY - eCommerce</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+            --dark-bg: #2c3e50;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+        }
+
+        /* Hero Carousel Enhancements */
+        #template-mo-zay-hero-carousel {
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        #template-mo-zay-hero-carousel .carousel-item {
+            min-height: 500px;
+            background-color: var(--light-bg);
+        }
+
+        #template-mo-zay-hero-carousel .carousel-item img {
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-item:hover img {
+            transform: scale(1.02);
+        }
+
+        #template-mo-zay-hero-carousel .h1 {
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            font-size: 2.8rem;
+            position: relative;
+        }
+
+        #template-mo-zay-hero-carousel .h1.text-success b {
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        #template-mo-zay-hero-carousel .h1.text-success b:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        #template-mo-zay-hero-carousel .h2 {
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            font-size: 2rem;
+        }
+
+        #template-mo-zay-hero-carousel p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-control-prev,
+        #template-mo-zay-hero-carousel .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.9;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #template-mo-zay-hero-carousel .carousel-control-prev {
+            left: 20px;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-control-next {
+            right: 20px;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-indicators {
+            bottom: -10px;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-indicators li {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            opacity: 0.5;
+            margin: 0 5px;
+        }
+
+        #template-mo-zay-hero-carousel .carousel-indicators li.active {
+            opacity: 1;
+        }
+
+        /* Category Section Enhancements */
+        .category-section {
+            padding: 5rem 0;
+            background: linear-gradient(to bottom, #fff, var(--light-bg));
+        }
+
+        .category-section .section-title {
+            margin-bottom: 3rem;
+        }
+
+        .category-section .section-title h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .category-section .section-title h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .category-section .section-title p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .category-item {
+            transition: transform 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .category-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .category-item img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .category-item:hover img {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .category-item h5 {
+            font-weight: 600;
+            margin-top: 1.5rem;
+            font-size: 1.3rem;
+            color: var(--dark-bg);
+        }
+
+        .category-item .btn-shop {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            padding: 8px 25px;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .category-item .btn-shop:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Featured Products Enhancements */
+        .featured-products {
+            padding: 5rem 0;
+            background-color: var(--light-bg);
+        }
+
+        .featured-products .section-title {
+            margin-bottom: 3rem;
+        }
+
+        .featured-products .section-title h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .featured-products .section-title h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .featured-products .section-title p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        .product-overlay {
+            opacity: 0;
+            background-color: rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .product-overlay ul li {
+            margin-bottom: 8px;
+        }
+
+        .product-overlay ul li a,
+        .product-overlay ul li button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .product-overlay ul li a:hover,
+        .product-overlay ul li button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .product-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .product-card .text-warning {
+            color: #f39c12 !important;
+        }
+
+        .product-card .product-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            min-height: 3.2rem;
+        }
+
+        .product-card .product-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            min-height: 4.2rem;
+        }
+
+        .product-card .price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .product-card .reviews {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* Newsletter Section (New Addition) */
+        .newsletter-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .newsletter-section h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-section p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .newsletter-form {
+            max-width: 550px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .newsletter-form input {
+            width: 100%;
+            padding: 15px 140px 15px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .newsletter-form button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            border: none;
+            background-color: var(--dark-bg);
+            color: white;
+            border-radius: 50px;
+            padding: 0 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-form button:hover {
+            background-color: var(--text-color);
+        }
+
+        /* Media Queries */
+        @media (max-width: 991px) {
+            #template-mo-zay-hero-carousel .carousel-item {
+                min-height: auto;
+                padding: 2rem 0;
+            }
+
+            #template-mo-zay-hero-carousel .h1 {
+                font-size: 2.3rem;
+            }
+
+            #template-mo-zay-hero-carousel .h2 {
+                font-size: 1.8rem;
+            }
+
+            .category-section .section-title h1,
+            .featured-products .section-title h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            #template-mo-zay-hero-carousel .carousel-item {
+                text-align: center;
+            }
+
+            #template-mo-zay-hero-carousel .order-lg-last {
+                margin-bottom: 2rem;
+            }
+
+            #template-mo-zay-hero-carousel .h1 {
+                font-size: 2rem;
+            }
+
+            #template-mo-zay-hero-carousel .h2 {
+                font-size: 1.5rem;
+            }
+
+            .category-section .section-title h1,
+            .featured-products .section-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .newsletter-form input {
+                padding: 15px 20px;
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+
+            .newsletter-form button {
+                position: static;
+                width: 100%;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Search Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Banner Hero -->
+<div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="container">
+                <div class="row p-5">
+                    <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                        <img class="img-fluid" th:src="@{/image/{id}(id=${banner1.id})}" alt="Banner 1">
+                    </div>
+                    <div class="col-lg-6 mb-0 d-flex align-items-center">
+                        <div class="text-align-left align-self-center">
+                            <h1 class="h1 text-success"><b>ZAY</b> eCommerce</h1>
+                            <h3 class="h2">Premium Shopping Experience</h3>
+                            <p>
+                                ZAY offers a curated selection of high-quality products. Powered by Spring Boot and MongoDB, our platform ensures a seamless shopping experience.
+                                Explore our collection today!
+                            </p>
+                            <a href="#featured-products" class="btn btn-success btn-lg px-4 me-md-2 fw-bold">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="container">
+                <div class="row p-5">
+                    <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                        <img class="img-fluid" th:src="@{/image/{id}(id=${banner2.id})}" alt="Banner 2">
+                    </div>
+                    <div class="col-lg-6 mb-0 d-flex align-items-center">
+                        <div class="text-align-left">
+                            <h1 class="h1">Discover New Arrivals</h1>
+                            <h3 class="h2">Shop the Latest Trends</h3>
+                            <p>
+                                From fashion to accessories, find the perfect addition to your collection at ZAY.
+                            </p>
+                            <a th:href="@{/shop}" class="btn btn-success btn-lg px-4 me-md-2 fw-bold">View Collection</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="container">
+                <div class="row p-5">
+                    <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                        <img class="img-fluid" th:src="@{/image/{id}(id=${banner3.id})}" alt="Banner 3">
+                    </div>
+                    <div class="col-lg-6 mb-0 d-flex align-items-center">
+                        <div class="text-align-left">
+                            <h1 class="h1">Exclusive Offers</h1>
+                            <h3 class="h2">Save Big Today</h3>
+                            <p>
+                                Enjoy exclusive discounts and promotions on your favorite products at ZAY.
+                            </p>
+                            <a th:href="@{/shop/promotions}" class="btn btn-success btn-lg px-4 me-md-2 fw-bold">View Deals</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide="prev">
+        <i class="fas fa-chevron-left"></i>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide="next">
+        <i class="fas fa-chevron-right"></i>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Categories of The Month -->
+<section class="category-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 m-auto">
+                <div class="section-title">
+                    <h1>Categories of The Month</h1>
+                    <p>
+                        Discover our top categories, curated for your shopping pleasure.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-4 text-center" th:each="category : ${categories}">
+                <div class="category-item">
+                    <a th:href="@{/shop/category/{id}(id=${category.id})}">
+                        <img th:if="${category.image != null}" th:src="@{/image/{id}(id=${category.image})}" class="rounded-circle img-fluid border" th:alt="${category.name}">
+                        <img th:unless="${category.image != null}" th:src="@{/static/images/default_category.jpg}" class="rounded-circle img-fluid border" th:alt="${category.name}">
+                    </a>
+                    <h5 th:text="${category.name}">Category</h5>
+                    <a class="btn btn-shop" th:href="@{/shop/category/{id}(id=${category.id})}">Go Shop</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products" id="featured-products">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 m-auto">
+                <div class="section-title">
+                    <h1>Featured Products</h1>
+                    <p>
+                        Check out our hand-picked selection of top products.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mb-4" th:each="product : ${featuredProducts}">
+                <div class="card product-card h-100">
+                    <a th:href="@{/shop/product/{id}(id=${product.id})}">
+                        <img th:if="${product.imageId != null}" th:src="@{/image/{id}(id=${product.imageId})}" class="card-img-top" th:alt="${product.name}">
+                        <img th:unless="${product.imageId != null}" th:src="@{/static/images/default_product.jpg}" class="card-img-top" th:alt="${product.name}">
+                    </a>
+                    <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                        <ul class="list-unstyled">
+                            <li sec:authorize="isAuthenticated()">
+                                <a class="btn text-white" th:href="@{/shop/product/{id}/bookmark(id=${product.id})}"><i class="far fa-heart"></i></a>
+                            </li>
+                            <li sec:authorize="!isAuthenticated()">
+                                <a class="btn text-white" th:href="@{/login}"><i class="far fa-heart"></i></a>
+                            </li>
+                            <li>
+                                <a class="btn text-white" th:href="@{/shop/product/{id}(id=${product.id})}"><i class="far fa-eye"></i></a>
+                            </li>
+                            <li sec:authorize="isAuthenticated()">
+                                <form th:action="@{/cart/add}" method="post">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn text-white"><i class="fas fa-cart-plus"></i></button>
+                                </form>
+                            </li>
+                            <li sec:authorize="!isAuthenticated()">
+                                <a class="btn text-white" th:href="@{/login}"><i class="fas fa-cart-plus"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled d-flex justify-content-between">
+                            <li>
+                                <i th:each="star : ${#numbers.sequence(1, 5)}" th:class="${star} <= (${product.rating} ?: 0) ? 'text-warning fa fa-star' : 'text-muted fa fa-star'"></i>
+                            </li>
+                            <li class="price" th:text="'$' + ${product.price}">0.00</li>
+                        </ul>
+                        <a th:href="@{/shop/product/{id}(id=${product.id})}" class="product-title text-decoration-none text-dark" th:text="${product.name}">Product Name</a>
+                        <p class="product-description" th:text="${product.description}">Description</p>
+                        <p class="reviews" th:text="'Reviews (' + ${product.reviewCount} + ')'">Reviews (0)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a th:href="@{/shop}" class="btn btn-outline-success btn-lg px-4">View All Products</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section (New Addition) -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h2>Subscribe to Our Newsletter</h2>
+                <p>Stay updated with our latest products, exclusive offers, and promotions.</p>
+                <form class="newsletter-form" th:action="@{/newsletter/subscribe}" method="post">
+                    <input type="email" name="email" placeholder="Enter your email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+    // Enable Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

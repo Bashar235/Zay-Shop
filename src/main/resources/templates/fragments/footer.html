@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<footer th:fragment="footer" class="bg-dark" id="tempaltemo_footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 pt-5">
+                <h2 class="h2 text-success border-bottom pb-3 border-light logo">ZAY Shop</h2>
+                <ul class="list-unstyled text-light footer-link-list">
+                    <li>
+                        <i class="fas fa-map-marker-alt fa-fw"></i>
+                        123 Consectetur at ligula 10660
+                    </li>
+                    <li>
+                        <i class="fa fa-phone fa-fw"></i>
+                        <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+                    </li>
+                    <li>
+                        <i class="fa fa-envelope fa-fw"></i>
+                        <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4 pt-5">
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
+                <ul class="list-unstyled text-light footer-link-list">
+                    <li th:each="category : ${categories}">
+                        <a class="text-decoration-none" th:href="@{/shop/category(id=${category.id})}" th:text="${category.name}">Category</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4 pt-5">
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
+                <ul class="list-unstyled text-light footer-link-list">
+                    <li><a class="text-decoration-none" th:href="@{/}">Home</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/about}">About Us</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/locations}">Shop Locations</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/faqs}">FAQs</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/contact}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row text-light mb-4">
+            <div class="col-12 mb-3">
+                <div class="w-100 my-3 border-top border-light"></div>
+            </div>
+            <div class="col-auto me-auto">
+                <ul class="list-inline text-left footer-icons">
+                    <li class="list-inline-item border border-light rounded-circle text-center">
+                        <a class="text-light text-decoration-none" target="_blank" th:href="@{http://facebook.com/}"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                    </li>
+                    <li class="list-inline-item border border-light rounded-circle text-center">
+                        <a class="text-light text-decoration-none" target="_blank" th:href="@{https://www.instagram.com/}"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
+                    </li>
+                    <li class="list-inline-item border border-light rounded-circle text-center">
+                        <a class="text-light text-decoration-none" target="_blank" th:href="@{https://twitter.com/}"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
+                    </li>
+                    <li class="list-inline-item border border-light rounded-circle text-center">
+                        <a class="text-light text-decoration-none" target="_blank" th:href="@{https://www.linkedin.com/}"><i class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-auto">
+                <form th:action="@{/subscribe}" method="post">
+                    <label class="sr-only" for="subscribeEmail">Email address</label>
+                    <div class="input-group mb-2">
+                        <input type="email" class="form-control bg-dark border-light" id="subscribeEmail" name="email" placeholder="Email address">
+                        <button class="input-group-text btn-success text-light" type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 bg-black py-3">
+        <div class="container">
+            <div class="row pt-2">
+                <div class="col-12">
+                    <p class="text-left text-light">
+                        Copyright © 2025 NOVA | Powered by Spring Boot
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

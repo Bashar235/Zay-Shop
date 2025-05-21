@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ZAY - Manage Categories</title>
+</head>
+<body>
+<div th:replace="~{fragments/admin-layout}">
+    <div th:fragment="content">
+        <div th:if="${success}" class="alert alert-success" role="alert">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Manage Categories</h1>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Categories</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${categories}">
+                            <td th:text="${category.id}"></td>
+                            <td th:text="${category.name}"></td>
+                            <td>
+                                <img th:if="${category.image != null}" th:src="@{/image/{id}(id=${category.image})}" class="img-fluid" style="max-width: 50px;" th:alt="${category.name}">
+                                <span th:unless="${category.image != null}">No Image</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/categories/update/{id}(id=${category.id})}" class="btn btn-primary btn-icon-split btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                    <span class="text">Update</span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const navLink = document.querySelector('a[href="/admin/categories"]');
+        if (navLink) navLink.parentElement.classList.add('active');
+    });
+</script>
+</body>
+</html>

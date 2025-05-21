@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>ZAY Shop - User Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" th:href="@{${logoImage.defaultPath != null} ? ${logoImage.defaultPath} : '/image/{id}(id=${logoImage.id})}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{${faviconImage.defaultPath != null} ? ${faviconImage.defaultPath} : '/image/{id}(id=${faviconImage.id})}">
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/static/css/templatemo.css}">
+  <link rel="stylesheet" th:href="@{/static/css/custom.css}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+  <style>
+    .dashboard-card {
+      border-radius: 12px;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    }
+    .stat-card {
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      color: white;
+    }
+    .card-blue {
+      background: linear-gradient(135deg, #4b6cb7, #182848);
+    }
+    .card-purple {
+      background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    }
+    .stat-card i {
+      font-size: 2.5rem;
+      opacity: 0.7;
+    }
+    .stat-card h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    .stat-card p {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #59ab6e;
+    }
+    .nav-pills .nav-link {
+      color: #212934;
+      border-radius: 8px;
+      margin-right: 5px;
+    }
+    .order-status {
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .status-pending {
+      background-color: #ffecb3;
+      color: #ff8f00;
+    }
+    .status-confirmed {
+      background-color: #bbdefb;
+      color: #1976d2;
+    }
+    .status-shipped {
+      background-color: #c8e6c9;
+      color: #388e3c;
+    }
+    .status-delivered {
+      background-color: #d1c4e9;
+      color: #512da8;
+    }
+    .status-cancelled {
+      background-color: #ffcdd2;
+      color: #d32f2f;
+    }
+    .bookmark-card {
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .bookmark-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+    }
+    .bookmark-card img {
+      height: 180px;
+      object-fit: cover;
+    }
+    .form-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+    }
+    .nav-icon.active {
+      background-color: rgba(46, 204, 113, 0.3);
+      border-radius: 50%;
+    }
+    .nav-icon.active i {
+      color: #2ecc71;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments :: topNav}"></div>
+<div th:replace="~{fragments :: header}"></div>
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h1 class="h2 mb-0">User Profile</h1>
+            <p class="text-muted">Manage your account details and preferences.</p>
+          </div>
+          <div class="position-relative">
+            <a th:href="@{/user/dashboard}" class="btn btn-success">
+              <i class="fas fa-tachometer-alt me-2"></i>Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <!-- Main Profile Content -->
+        <div class="row">
+          <div class="col-lg-8">
+            <!-- Tabs -->
+            <ul class="nav nav-pills mb-3" id="profile-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="edit-tab" data-bs-toggle="pill" data-bs-target="#edit-tab-pane" type="button" role="tab" aria-controls="edit-tab-pane" aria-selected="true">Edit Profile</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="orders-tab" data-bs-toggle="pill" data-bs-target="#orders-tab-pane" type="button" role="tab" aria-controls="orders-tab-pane" aria-selected="false">Recent Orders</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks-tab-pane" type="button" role="tab" aria-controls="bookmarks-tab-pane" aria-selected="false">Bookmarked Products</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="profile-tab-content">
+              <!-- Edit Profile Tab -->
+              <div class="tab-pane fade show active" id="edit-tab-pane" role="tabpanel" aria-labelledby="edit-tab" tabindex="0">
+                <div class="card dashboard-card">
+                  <div class="card-body form-section">
+                    <h5 class="card-title mb-4">Update Your Profile</h5>
+                    <form th:action="@{/user/profile}" th:object="${user}" method="post">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                      <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                        <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger"></div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+                      </div>
+                      <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Orders Tab -->
+              <div class="tab-pane fade" id="orders-tab-pane" role="tabpanel" aria-labelledby="orders-tab" tabindex="0">
+                <div class="card dashboard-card">
+                  <div class="card-body">
+                    <div th:if="${orders.isEmpty()}" class="text-center py-4">
+                      <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                      <p class="text-muted">You have no orders yet.</p>
+                      <a th:href="@{/shop}" class="btn btn-success">Start Shopping</a>
+                    </div>
+                    <div th:unless="${orders.isEmpty()}" class="table-responsive">
+                      <table class="table align-middle">
+                        <thead>
+                        <tr>
+                          <th>Order ID</th>
+                          <th>Date</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="order : ${orders}">
+                          <td>#<span th:text="${order.id}"></span></td>
+                          <td th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy HH:mm')}"></td>
+                          <td>$<span th:text="${order.totalPrice}"></span></td>
+                          <td>
+                            <span th:class="${'order-status ' +
+                              (order.status == 'PENDING' ? 'status-pending' :
+                               order.status == 'CONFIRMED' ? 'status-confirmed' :
+                               order.status == 'SHIPPED' ? 'status-shipped' :
+                               order.status == 'DELIVERED' ? 'status-delivered' :
+                               'status-cancelled')}"
+                                  th:text="${order.status}"></span>
+                          </td>
+                          <td>
+                            <div class="btn-group">
+                              <a th:href="@{/order-confirmation(orderId=${order.id})}" class="btn btn-sm btn-outline-primary">View</a>
+                              <a th:if="${order.status == 'PENDING'}" th:href="@{/order/cancel(orderId=${order.id})}" class="btn btn-sm btn-outline-danger">Cancel</a>
+                            </div>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div th:if="${orders.size() > 5}" class="text-center mt-3">
+                      <a th:href="@{/user/orders}" class="btn btn-outline-secondary">View All Orders</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bookmarks Tab -->
+              <div class="tab-pane fade" id="bookmarks-tab-pane" role="tabpanel" aria-labelledby="bookmarks-tab" tabindex="0">
+                <div class="card dashboard-card">
+                  <div class="card-body">
+                    <div th:if="${bookmarkedProducts.isEmpty()}" class="text-center py-4">
+                      <i class="fas fa-bookmark fa-3x text-muted mb-3"></i>
+                      <p class="text-muted">You have no bookmarked products.</p>
+                      <a th:href="@{/shop}" class="btn btn-success">Explore Products</a>
+                    </div>
+                    <div th:unless="${bookmarkedProducts.isEmpty()}" class="row">
+                      <div th:each="product : ${bookmarkedProducts}" class="col-md-4 mb-4">
+                        <div class="card bookmark-card h-100">
+                          <img th:src="@{/image/{id}(id=${product.imageId})}" class="card-img-top" alt="Product">
+                          <div class="card-body">
+                            <h6 class="card-title" th:text="${product.name}"></h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                              <span class="text-success fw-bold" th:text="'$' + ${product.price}"></span>
+                            </div>
+                          </div>
+                          <div class="card-footer bg-white d-flex justify-content-between">
+                            <form th:action="@{/cart/add}" method="post" style="display: inline;">
+                              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                              <input type="hidden" name="productId" th:value="${product.id}">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-sm btn-success">Add to Cart</button>
+                            </form>
+                            <form th:action="@{/user/bookmark/remove}" method="post" style="display: inline;">
+                              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                              <input type="hidden" name="productId" th:value="${product.id}">
+                              <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar -->
+          <div class="col-lg-4">
+            <!-- Account Summary -->
+            <div class="card dashboard-card mb-4">
+              <div class="card-body">
+                <h5 class="card-title">Account Summary</h5>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Name:</span>
+                    <span class="fw-bold" th:text="${user.fullName != null ? user.fullName : 'N/A'}">N/A</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Email:</span>
+                    <span class="fw-bold" th:text="${user.email != null ? user.email : 'N/A'}">N/A</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>Status:</span>
+                    <span class="badge bg-success">Active</span>
+                  </div>
+                </div>
+                <div class="d-grid">
+                  <a th:href="@{/user/dashboard}" class="btn btn-outline-success">Back to Dashboard</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div th:replace="~{fragments :: footer}"></div>
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/static/js/templatemo.js}"></script>
+<script th:src="@{/static/js/custom.js}"></script>
+<script th:inline="javascript">
+  $(document).ready(function() {
+    // Highlight profile icon
+    $('.nav-icon').each(function() {
+      if ($(this).attr('href') === '/user/profile') {
+        $(this).addClass('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>
+```

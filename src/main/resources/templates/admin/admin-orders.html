@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Zay Shop - Admin Orders</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" th:href="@{/image/${logoImage.id}}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/${faviconImage.id}}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/templatemo.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/custom.css}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="h2 pb-4">Manage Orders</h1>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td th:text="${order.id}">ID</td>
+                            <td th:text="${order.userId}">User</td>
+                            <td th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy HH:mm')}">Date</td>
+                            <td th:text="'$' + ${order.totalPrice}">0.00</td>
+                            <td>
+                                <form class="update-status-form">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="hidden" name="orderId" th:value="${order.id}" />
+                                    <select name="status" th:value="${order.status}">
+                                        <option value="PENDING">Pending</option>
+                                        <option value="CONFIRMED">Confirmed</option>
+                                        <option value="SHIPPED">Shipped</option>
+                                        <option value="DELIVERED">Delivered</option>
+                                        <option value="CANCELLED">Cancelled</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <a th:href="@{/api/orders/{id}(id=${order.id})}" class="btn btn-sm btn-info">View</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/templatemo.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/custom.js}"></script>
+<script>
+    $(document).ready(function() {
+      $('.update-status-form').submit(function(event) {
+        event.preventDefault();
+        const form = $(this);
+        const orderId = form.find('input[name="orderId"]').val();
+        const status = form.find('select[name="status"]').val();
+        $.ajax({
+          url: '/api/orders/' + orderId + '/status',
+          type: 'PUT',
+          contentType: 'application/json',
+          data: JSON.stringify(status),
+          headers: {
+            'X-CSRF-TOKEN': form.find('input[name="_csrf"]').val()
+          },
+          success: function(response) {
+            location.reload();
+          },
+          error: function(xhr) {
+            alert('Error updating status: ' + (xhr.responseJSON?.message || 'Please try again.'));
+          }
+        });
+      });
+    });
+</script>
+</body>
+</html>

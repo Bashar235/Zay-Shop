@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>ZAY - Order Tracking</title>
+</head>
+<body>
+<div th:replace="~{fragments/admin-layout}">
+  <div th:fragment="content">
+    <div th:if="${success}" class="alert alert-success" role="alert">
+      <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <span th:text="${error}"></span>
+    </div>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Order Tracking</h1>
+    </div>
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Orders</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="orderTable" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total Price</th>
+              <th>Status</th>
+              <th>Order Date</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+              <td th:text="${order.id}"></td>
+              <td th:text="${order.fullName}"></td>
+              <td th:text="${order.totalPrice}"></td>
+              <td>
+                <select class="form-control status-select" th:attr="data-order-id=${order.id}">
+                  <option value="PENDING" th:selected="${order.status == 'PENDING'}">Pending</option>
+                  <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">Confirmed</option>
+                  <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">Shipped</option>
+                  <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">Delivered</option>
+                  <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Cancelled</option>
+                </select>
+              </td>
+              <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+              <td th:text="${order.address + ', ' + order.city + ', ' + order.zipCode + ', ' + order.country}"></td>
+              <td>
+                <a th:href="@{/admin/orders/view/{id}(id=${order.id})}" class="btn btn-info btn-icon-split btn-sm">
+                  <span class="icon text-white-50">
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                  <span class="text">View</span>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      document.querySelector('a[href="/admin/orders"]').parentElement.classList.add('active');
+
+      document.querySelectorAll('.status-select').forEach(select => {
+          select.addEventListener('change', function() {
+              const orderId = this.getAttribute('data-order-id');
+              const newStatus = this.value; // Already uppercase (PENDING, etc.)
+              updateOrderStatus(orderId, newStatus);
+          });
+      });
+  });
+
+  function updateOrderStatus(orderId, status) {
+      const csrfHeader = [[${_csrf.headerName}]] || 'X-CSRF-TOKEN';
+      const csrfToken = [[${_csrf.token}]] || '';
+      fetch(`/api/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'text/plain',
+              [csrfHeader]: csrfToken
+          },
+          body: status
+      })
+      .then(response => {
+          if (!response.ok) {
+              return response.json().then(errorData => {
+                  throw new Error(errorData.message || `Server error: ${response.status}`);
+              });
+          }
+          return response.json();
+      })
+      .then(data => {
+          showSuccess('Order status updated successfully!');
+      })
+      .catch(error => {
+          console.error('Error updating order status:', error);
+          showError('Failed to update order status: ' + error.message);
+      });
+  }
+
+  function showSuccess(message) {
+      const modal = document.createElement('div');
+      modal.className = 'modal fade';
+      modal.id = 'successModal';
+      modal.innerHTML = `
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Success</h5>
+                      <button type="button" class="close" data-dismiss="modal">×</button>
+                  </div>
+                  <div class="modal-body">${message}</div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                  </div>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(modal);
+      $('#successModal').modal('show');
+      $('#successModal').on('hidden.bs.modal', () => modal.remove());
+  }
+
+  function showError(message) {
+      const modal = document.createElement('div');
+      modal.className = 'modal fade';
+      modal.id = 'errorModal';
+      modal.innerHTML = `
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Error</h5>
+                      <button type="button" class="close" data-dismiss="modal">×</button>
+                  </div>
+                  <div class="modal-body">${message}</div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                  </div>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(modal);
+      $('#errorModal').modal('show');
+      $('#errorModal').on('hidden.bs.modal', () => modal.remove());
+  }
+</script>
+</body>
+</html>

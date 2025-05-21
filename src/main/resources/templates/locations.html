@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Zay Shop - Locations</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" th:href="@{/static/img/apple-icon.png}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/static/img/favicon.ico}">
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/static/css/templatemo.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/static/css/custom.css}">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content Page -->
+<div class="container-fluid bg-light py-5">
+  <div class="col-md-6 m-auto text-center">
+    <h1 class="h1">Our Locations</h1>
+    <p>
+      Visit our stores to experience our products in person.
+    </p>
+  </div>
+</div>
+
+<!-- Locations Section -->
+<section class="container py-5">
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Downtown Store</h5>
+          <p class="card-text">
+            123 Main Street, Cityville, ST 12345<br>
+            Phone: (123) 456-7890<br>
+            Hours: Mon-Sat, 10 AM - 6 PM
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Mall Store</h5>
+          <p class="card-text">
+            456 Shopping Plaza, Townsville, ST 67890<br>
+            Phone: (123) 987-6543<br>
+            Hours: Mon-Sun, 10 AM - 8 PM
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/jquery-migrate-1.2.1.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/templatemo.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/custom.js}"></script>
+</body>
+</html>

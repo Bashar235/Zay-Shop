@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Zay Shop - Order Details</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Updated: Fixed Thymeleaf syntax for apple touch icon and favicon -->
+    <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/templatemo.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/custom.css}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="h2 pb-4">Order Details</h1>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                <h3>Order Information</h3>
+                <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+                <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy HH:mm')}"></span></p>
+                <p><strong>Status:</strong> <span th:text="${order.status}"></span></p>
+                <p><strong>Total:</strong> <span th:text="'$' + ${order.totalPrice}"></span></p>
+                <h4>Shipping Information</h4>
+                <p><strong>Name:</strong> <span th:text="${order.fullName}"></span></p>
+                <p><strong>Address:</strong> <span th:text="${order.address} + ', ' + ${order.city} + ', ' + ${order.zipCode} + ', ' + ${order.country}"></span></p>
+                <h4>Order Items</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td>
+                                <!-- Updated: Use item.imageId assuming OrderItem has imageId -->
+                                <img th:src="@{/image/{id}(id=${item.imageId})}" alt="Product" style="width: 50px;">
+                                <span th:text="${item.productName}"></span>
+                            </td>
+                            <td th:text="'$' + ${item.price}"></td>
+                            <td th:text="${item.quantity}"></td>
+                            <td th:text="'$' + ${item.price * item.quantity}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a th:href="@{/user/dashboard}" class="btn btn-primary">Back to Dashboard</a>
+                <a th:href="@{/shop}" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/templatemo.js}"></script>
+<script type="application/javascript" th:src="@{/static/js/custom.js}"></script>
+</body>
+</html>

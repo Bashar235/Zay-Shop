@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Zay Shop - Product Detail Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" th:href="@{/image/{id}(id=${logoImage.id})}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/image/{id}(id=${faviconImage.id})}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.0.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <style>
+        .product-detail-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .product-detail-card img {
+            border-radius: 12px;
+            object-fit: cover;
+            max-height: 400px;
+        }
+        .product-detail-card:hover {
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #59ab6e, #3d8b4d);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #3d8b4d, #59ab6e);
+            transform: translateY(-2px);
+        }
+        .quantity-btn {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .quantity-btn:hover {
+            background: linear-gradient(135deg, #182848, #4b6cb7);
+        }
+        .comment-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .comment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        .related-product-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+        .related-product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        .related-product-card img {
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+        .product-overlay {
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .related-product-card:hover .product-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<!-- Top Nav -->
+<div th:replace="~{fragments :: topNav}"></div>
+
+<!-- Header -->
+<div th:replace="~{fragments :: header}"></div>
+
+<!-- Modal -->
+<div th:replace="~{fragments :: searchModal}"></div>
+
+<!-- Content -->
+<section class="bg-light py-5">
+    <div class="container pb-5">
+        <div class="row">
+            <div class="col-lg-5 mt-5">
+                <div class="card product-detail-card">
+                    <img class="card-img img-fluid" th:if="${product.imageId != null}" th:src="@{/image/{id}(id=${product.imageId})}" th:alt="${product.name}" id="product-detail">
+                    <img class="card-img img-fluid" th:unless="${product.imageId != null}" th:src="@{/static/images/default_product.jpg}" th:alt="${product.name}" id="product-detail">
+                </div>
+            </div>
+            <div class="col-lg-7 mt-5">
+                <div class="card product-detail-card">
+                    <div class="card-body">
+                        <h1 class="h2" th:text="${product.name}">Active Wear</h1>
+                        <p class="h3 py-2 text-success fw-bold" th:text="'$' + ${product.price}">$25.00</p>
+                        <p class="py-2">
+                            <i th:each="star : ${#numbers.sequence(1, 5)}" th:class="${star} <= (${product.rating} ?: 0) ? 'fa fa-star text-warning' : 'fa fa-star text-secondary'"></i>
+                            <span class="list-inline-item text-dark" th:text="'Rating ' + (${product.rating} ?: 0) + ' | ' + ${product.comments.size()} + ' Comments'">Rating 4.8 | 36 Comments</span>
+                        </p>
+                        <h6>Description:</h6>
+                        <p th:text="${product.description}">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        <h6>Category:</h6>
+                        <p class="text-muted" th:text="${product.category}">Category</p>
+                        <div sec:authorize="isAuthenticated()">
+                            <form th:action="@{/cart/add}" method="post">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <input type="hidden" name="product-title" th:value="${product.name}">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <ul class="list-inline pb-3">
+                                            <li class="list-inline-item text-right">
+                                                Quantity
+                                                <input type="hidden" name="product-quantity" id="product-quantity" value="1">
+                                            </li>
+                                            <li class="list-inline-item"><span class="quantity-btn" id="btn-minus">-</span></li>
+                                            <li class="list-inline-item"><span class="badge bg-secondary" id="var-value">1</span></li>
+                                            <li class="list-inline-item"><span class="quantity-btn" id="btn-plus">+</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row pb-3">
+                                    <div class="col d-grid">
+                                        <button type="submit" class="btn btn-success btn-lg" name="submit" value="buy">Buy</button>
+                                    </div>
+                                    <div class="col d-grid">
+                                        <button type="submit" class="btn btn-success btn-lg" name="submit" value="addtocard">Add To Cart</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div sec:authorize="!isAuthenticated()">
+                            <p class="text-muted">Please <a th:href="@{/login}">login</a> to add this product to your cart.</p>
+                        </div>
+                        <div class="mt-3">
+                            <form th:action="@{/shop/product/{id}/bookmark(id=${product.id})}" method="post" sec:authorize="isAuthenticated()">
+                                <button type="submit" class="btn btn-success"><i class="far fa-heart"></i> Bookmark</button>
+                            </form>
+                            <a th:href="@{/login}" class="btn btn-success" sec:authorize="!isAuthenticated()"><i class="far fa-heart"></i> Bookmark (Login Required)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comments Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-left p-2 pb-3">
+            <h4>Comments</h4>
+        </div>
+        <div class="row" th:each="comment : ${product.comments}">
+            <div class="col-md-12 mb-3">
+                <div class="card comment-card">
+                    <div class="card-body">
+                        <h6 class="card-title" th:text="${comment.username}">User</h6>
+                        <p class="card-text" th:text="${comment.content}">Great product!</p>
+                        <p class="card-text"><small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}">01 Jan 2023 12:00</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" sec:authorize="isAuthenticated()">
+            <div class="col-md-12">
+                <form th:action="@{/shop/product/{id}/comment(id=${product.id})}" method="post">
+                    <div class="mb-3">
+                        <label for="commentContent" class="form-label">Leave a Comment</label>
+                        <textarea class="form-control" id="commentContent" name="content" rows="4" placeholder="Your comment"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit Comment</button>
+                </form>
+            </div>
+        </div>
+        <div class="row" sec:authorize="!isAuthenticated()">
+            <div class="col-md-12">
+                <p class="text-muted">Please <a th:href="@{/login}">login</a> to leave a comment.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-left p-2 pb-3">
+            <h4>Related Products</h4>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4" th:each="relatedProduct : ${relatedProducts}">
+                <div class="card related-product-card">
+                    <div class="position-relative">
+                        <img class="card-img-top" th:if="${relatedProduct.imageId != null}" th:src="@{/image/{id}(id=${relatedProduct.imageId})}" th:alt="${relatedProduct.name}">
+                        <img class="card-img-top" th:unless="${relatedProduct.imageId != null}" th:src="@{/static/images/default_product.jpg}" th:alt="${relatedProduct.name}">
+                        <div class="card-img-overlay product-overlay d-flex align-items-center justify-content-center">
+                            <ul class="list-unstyled">
+                                <li sec:authorize="isAuthenticated()">
+                                    <a class="btn btn-success text-white" th:href="@{/shop/product/{id}/bookmark(id=${relatedProduct.id})}"><i class="far fa-heart"></i></a>
+                                </li>
+                                <li sec:authorize="!isAuthenticated()">
+                                    <a class="btn btn-success text-white" th:href="@{/login}"><i class="far fa-heart"></i></a>
+                                </li>
+                                <li>
+                                    <a class="btn btn-success text-white mt-2" th:href="@{/shop/product/{id}(id=${relatedProduct.id})}"><i class="far fa-eye"></i></a>
+                                </li>
+                                <li sec:authorize="isAuthenticated()">
+                                    <form th:action="@{/cart/add}" method="post">
+                                        <input type="hidden" name="productId" th:value="${relatedProduct.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-success text-white mt-2"><i class="fas fa-cart-plus"></i></button>
+                                    </form>
+                                </li>
+                                <li sec:authorize="!isAuthenticated()">
+                                    <a class="btn btn-success text-white mt-2" th:href="@{/login}"><i class="fas fa-cart-plus"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <a th:href="@{/shop/product/{id}(id=${relatedProduct.id})}" class="h5 text-decoration-none" th:text="${relatedProduct.name}">Oupidatat non</a>
+                        <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
+                            <li th:if="${relatedProduct.category != null}" th:text="${relatedProduct.category}">Category</li>
+                            <li th:unless="${relatedProduct.category != null}">N/A</li>
+                            <li>
+                                <ul class="list-unstyled d-flex mb-1">
+                                    <li>
+                                        <i th:each="star : ${#numbers.sequence(1, 5)}" th:class="${star} <= (${relatedProduct.rating} ?: 0) ? 'text-warning fa fa-star' : 'text-muted fa fa-star'"></i>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p class="text-center mb-0 fw-bold text-success" th:text="'$' + ${relatedProduct.price}">$20.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Scripts -->
+<script type="application/javascript" th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('#btn-minus').click(function(){
+            var val = parseInt($('#var-value').text());
+            if(val > 1){
+                val--;
+                $('#var-value').text(val);
+                $('#product-quantity').val(val);
+            }
+        });
+        $('#btn-plus').click(function(){
+            var val = parseInt($('#var-value').text());
+            val++;
+            $('#var-value').text(val);
+            $('#product-quantity').val(val);
+        });
+    });
+</script>
+</body>
+</html>
