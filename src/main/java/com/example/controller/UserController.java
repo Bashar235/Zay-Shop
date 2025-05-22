@@ -1,31 +1,20 @@
 package com.example.controller;
 
 import com.example.dto.UserProfileDTO;
-import com.example.dto.UserRegistrationDTO;
 import com.example.model.Image;
 import com.example.model.User;
 import com.example.service.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -37,24 +26,16 @@ public class UserController {
     private final CartService cartService;
     private final OrderService orderService;
     private final ImageService imageService;
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-    private final String recaptchaSecret;
 
     @Autowired
     public UserController(UserService userService, ProductService productService,
                           CartService cartService, OrderService orderService,
-                          ImageService imageService, RestTemplate restTemplate,
-                          ObjectMapper objectMapper,
-                          @Value("${app.recaptcha.secret}") String recaptchaSecret) {
+                          ImageService imageService) {
         this.userService = userService;
         this.productService = productService;
         this.cartService = cartService;
         this.orderService = orderService;
         this.imageService = imageService;
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-        this.recaptchaSecret = recaptchaSecret;
     }
 
     @GetMapping("/dashboard")
@@ -71,45 +52,6 @@ public class UserController {
         model.addAttribute("orders", orderService.getOrdersByUserId(username));
         addImageAttributes(model);
         return "user/dashboard";
-    }
-
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserRegistrationDTO());
-        addImageAttributes(model);
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationDTO userDTO,
-                               BindingResult result,
-                               @RequestParam(value = "adminCode", required = false) String adminCode,
-                               @RequestParam(value = "recaptchaToken", required = false) String recaptchaToken,
-                               Model model, RedirectAttributes redirectAttributes) {
-        logger.info("Processing registration for user: {}", userDTO.getUsername());
-        logger.debug("UserDTO: username={}, email={}, fullName={}, role={}",
-                userDTO.getUsername(), userDTO.getEmail(), userDTO.getFullName(), userDTO.getRole());
-        logger.debug("BindingResult has errors: {}", result.hasErrors());
-
-        if (result.hasErrors()) {
-            logger.error("Validation errors in registration form: {}", result.getAllErrors());
-            addImageAttributes(model);
-            return "register";
-        }
-
-        logger.info("Validation passed, proceeding with registration");
-        try {
-            logger.info("Calling UserService.registerUser for: {}", userDTO.getUsername());
-            userService.registerUser(userDTO, adminCode);
-            logger.info("Registration successful for: {}", userDTO.getUsername());
-            redirectAttributes.addFlashAttribute("success", "Registration successful! Please log in.");
-            return "redirect:/login";
-        } catch (IllegalStateException e) {
-            logger.error("Registration failed: {}", e.getMessage(), e);
-            model.addAttribute("error", e.getMessage());
-            addImageAttributes(model);
-            return "register";
-        }
     }
 
     @GetMapping("/profile")
@@ -178,31 +120,6 @@ public class UserController {
     @ResponseBody
     public boolean checkEmail(@RequestParam String email) {
         return userService.findByEmail(email).isEmpty();
-    }
-
-    private boolean verifyRecaptcha(String token) {
-        try {
-            String url = "https://www.google.com/recaptcha/api/siteverify";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
-
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.add("secret", recaptchaSecret);
-            map.add("response", token);
-
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-
-            Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), Map.class);
-            if (Boolean.TRUE.equals(responseMap.get("success"))) {
-                Double score = (Double) responseMap.get("score");
-                return score != null && score >= 0.5;
-            }
-            return false;
-        } catch (Exception e) {
-            logger.error("reCAPTCHA verification failed: {}", e.getMessage());
-            return false;
-        }
     }
 
     private void addImageAttributes(Model model) {

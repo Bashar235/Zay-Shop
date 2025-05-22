@@ -2,16 +2,13 @@ $(document).ready(function() {
     const usernameInput = $('#username');
     const emailInput = $('#email');
     const passwordInput = $('#password');
-    const confirmPasswordInput = $('#confirmPassword');
     const roleSelect = $('#role');
     const adminCodeGroup = $('#adminCodeGroup');
     const adminCodeInput = $('#adminCode');
     const form = $('#registerForm');
-    const recaptchaTokenInput = $('#recaptchaToken');
     const errorMessage = $('#errorMessage');
     const csrfHeader = $('meta[name="_csrf_header"]').attr('content') || 'X-CSRF-TOKEN';
     const csrfToken = $('meta[name="_csrf"]').attr('content') || '';
-    const recaptchaSiteKey = '6LcGB0IrAAAAAP2XinUfxMA5slJTv8xAAnVe4opJ';
 
     console.log('register.js initialized');
 
@@ -106,79 +103,27 @@ $(document).ready(function() {
             $('#passwordFeedback').text('Password is strong');
             passwordInput.removeClass('is-invalid').addClass('is-valid');
         }
-        confirmPasswordInput.trigger('input');
-    });
-
-    // Confirm password
-    confirmPasswordInput.on('input', function() {
-        const confirmPassword = $(this).val();
-        const password = passwordInput.val();
-        if (confirmPassword && confirmPassword !== password) {
-            $(this).addClass('is-invalid').removeClass('is-valid');
-            $('#confirmPasswordFeedback').text('Passwords do not match');
-        } else {
-            $(this).addClass('is-valid').removeClass('is-invalid');
-            $('#confirmPasswordFeedback').text('');
-        }
     });
 
     // Form submission
     form.on('submit', function(e) {
-        e.preventDefault();
         console.log('Form submission triggered');
-
         if (!form[0].checkValidity()) {
+            e.preventDefault();
             form.addClass('was-validated');
             errorMessage.text('Please fill in all required fields correctly');
             return;
         }
 
-        if (passwordInput.val() !== confirmPasswordInput.val()) {
-            confirmPasswordInput.addClass('is-invalid');
-            errorMessage.text('Passwords do not match');
-            return;
-        }
-
         if (roleSelect.val() === 'ROLE_ADMIN' && !adminCodeInput.val()) {
+            e.preventDefault();
             adminCodeInput.addClass('is-invalid');
             errorMessage.text('Admin registration code is required');
             return;
         }
 
-        grecaptcha.ready(function() {
-            console.log('Executing reCAPTCHA');
-            grecaptcha.execute(recaptchaSiteKey, { action: 'register' })
-                .then(function(token) {
-                    console.log('reCAPTCHA token generated:', token);
-                    recaptchaTokenInput.val(token);
-                    errorMessage.text('');
-
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: form.attr('method'),
-                        data: form.serialize(),
-                        headers: { [csrfHeader]: csrfToken },
-                        success: function() {
-                            console.log('Registration successful');
-                            window.location.href = '/login?success=Registration+successful';
-                        },
-                        error: function(xhr) {
-                            console.error('Registration failed:', xhr);
-                            let errorMsg = 'Registration failed. Please try again.';
-                            if (xhr.responseJSON && xhr.responseJSON.error) {
-                                errorMsg = xhr.responseJSON.error;
-                            } else if (xhr.status === 400) {
-                                errorMsg = 'Invalid form data. Please check your inputs.';
-                            }
-                            errorMessage.text(errorMsg);
-                        }
-                    });
-                })
-                .catch(function(error) {
-                    console.error('reCAPTCHA error:', error);
-                    errorMessage.text('reCAPTCHA verification failed. Please try again.');
-                });
-        });
+        // Allow form to submit naturally (no AJAX)
+        // The RegisterController will handle the submission
     });
 
     // Debounce function
