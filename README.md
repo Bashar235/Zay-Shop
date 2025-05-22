@@ -54,7 +54,7 @@ mvn spring-boot:run
 Alternatively, use your IDE's run configuration for the main application class (e.g., ZayShopApplication.java)
 
 5.Verify Setup
-Open a web browser and navigate to http://localhost:8080.
+Open a web browser and navigate to [http://localhost:8080](https://zay-shop-3962cfd187c7.herokuapp.com/)
 You should see the Zay Shop homepage with the top nav, header, and footer rendered. Test navigation links and the search modal.
 
 Usage
