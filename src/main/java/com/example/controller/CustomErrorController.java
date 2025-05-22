@@ -53,7 +53,7 @@ public class CustomErrorController implements ErrorController {
         String paramName = ex.getParameterName();
         redirectAttributes.addFlashAttribute("error", "Required parameter '" + paramName + "' is missing");
         if (paramName.equals("recaptchaToken")) {
-            return "redirect:/user/register";
+            return "redirect:/register";
         }
         return "redirect:/error";
     }
@@ -62,7 +62,7 @@ public class CustomErrorController implements ErrorController {
     public String handleIllegalStateException(IllegalStateException ex, RedirectAttributes redirectAttributes) {
         logger.error("Illegal state: {}", ex.getMessage(), ex);
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        return "redirect:/user/register";
+        return "redirect:/register";
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -72,7 +72,7 @@ public class CustomErrorController implements ErrorController {
                 .map(cv -> cv.getMessage())
                 .collect(Collectors.joining(", "));
         redirectAttributes.addFlashAttribute("error", errorMessage);
-        return "redirect:/user/register";
+        return "redirect:/register";
     }
 
     @ExceptionHandler(RuntimeException.class)
