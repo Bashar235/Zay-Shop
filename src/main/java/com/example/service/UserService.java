@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -19,6 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final String adminCode;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, @Value("${app.admin.code}") String adminCode) {
@@ -44,7 +48,14 @@ public class UserService {
                 userDTO.getFullName(),
                 userDTO.getRole()
         );
-        return userRepository.save(user);
+        try {
+            User savedUser = userRepository.save(user);
+            logger.info("User saved successfully with ID: {}", savedUser.getId());
+            return savedUser;
+        } catch (Exception e) {
+            logger.error("Failed to save user: {}", e.getMessage(), e);
+            throw new IllegalStateException("Failed to save user: " + e.getMessage());
+        }
     }
 
     public User updateProfile(String username, @Valid UserProfileDTO profileDTO) {

@@ -86,25 +86,26 @@ public class UserController {
                                @RequestParam(value = "adminCode", required = false) String adminCode,
                                @RequestParam(value = "recaptchaToken", required = false) String recaptchaToken,
                                Model model, RedirectAttributes redirectAttributes) {
+        logger.info("Processing registration for user: {}", userDTO.getUsername());
+        logger.debug("UserDTO: username={}, email={}, fullName={}, role={}",
+                userDTO.getUsername(), userDTO.getEmail(), userDTO.getFullName(), userDTO.getRole());
+        logger.debug("BindingResult has errors: {}", result.hasErrors());
+
         if (result.hasErrors()) {
+            logger.error("Validation errors in registration form: {}", result.getAllErrors());
             addImageAttributes(model);
             return "register";
         }
-        if (recaptchaToken == null || recaptchaToken.trim().isEmpty()) {
-            model.addAttribute("error", "reCAPTCHA verification is required");
-            addImageAttributes(model);
-            return "register";
-        }
+
+        logger.info("Validation passed, proceeding with registration");
         try {
-            if (!verifyRecaptcha(recaptchaToken)) {
-                model.addAttribute("error", "reCAPTCHA verification failed");
-                addImageAttributes(model);
-                return "register";
-            }
+            logger.info("Calling UserService.registerUser for: {}", userDTO.getUsername());
             userService.registerUser(userDTO, adminCode);
+            logger.info("Registration successful for: {}", userDTO.getUsername());
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please log in.");
             return "redirect:/login";
         } catch (IllegalStateException e) {
+            logger.error("Registration failed: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());
             addImageAttributes(model);
             return "register";
