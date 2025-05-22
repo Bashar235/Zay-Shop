@@ -1,6 +1,6 @@
 # Zay Shop Project
 
-## Overview
+## Overview(Link provided in the about)
 
 Zay Shop is an e-commerce web application designed to provide a modern and user-friendly shopping experience. The project features reusable HTML fragments (e.g., top navigation, header, search modal, and footer) built with Thymeleaf, styled with custom CSS, and enhanced with JavaScript for interactivity. The design is minimalistic yet futuristic, incorporating gradients, glassmorphism effects, and smooth animations. It integrates with a backend (assumed to be Spring Boot) to handle dynamic content, authentication, and e-commerce functionalities.
 
